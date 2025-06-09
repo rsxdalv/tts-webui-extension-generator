@@ -1,0 +1,44 @@
+{
+  "name": "tts-webui-extension-generator",
+  "version": "1.0.0",
+  "description": "Extension generator for TTS Generation WebUI - creates boilerplate extensions with proper structure",
+  "main": "generate-extension.js",
+  "bin": {
+    "tts-webui-generate-extension": "./generate-extension.js",
+    "generate-extension": "./generate-extension.js"
+  },
+  "scripts": {
+    "test": "node test.js",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "tts",
+    "text-to-speech",
+    "extension",
+    "generator",
+    "template",
+    "gradio",
+    "webui",
+    "boilerplate",
+    "cli"
+  ],
+  "author": "rsxdalv",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rsxdalv/tts-webui-extension-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rsxdalv/tts-webui-extension-generator/issues"
+  },
+  "homepage": "https://github.com/rsxdalv/tts-webui-extension-generator#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "generate-extension.js",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ]
+}
