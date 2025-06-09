@@ -37,6 +37,7 @@ console.log(`Directory: ${extensionDir}`);
 // Create directory structure
 fs.mkdirSync(extensionDir, { recursive: true });
 fs.mkdirSync(sourceDir, { recursive: true });
+fs.mkdirSync(path.join(extensionDir, '.github', 'workflows'), { recursive: true });
 
 // Template for main.py
 const mainPyTemplate = `import gradio as gr
@@ -189,6 +190,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `;
 
+// Read template files
+function readTemplate(templatePath) {
+    try {
+        return fs.readFileSync(path.join(__dirname, 'templates', templatePath), 'utf8');
+    } catch (error) {
+        console.warn(`Warning: Could not read template ${templatePath}: ${error.message}`);
+        return null;
+    }
+}
+
 // Write files
 console.log('Creating files...');
 
@@ -206,6 +217,13 @@ console.log(`✓ Created ${path.join(extensionDir, 'README.md')}`);
 
 fs.writeFileSync(path.join(extensionDir, 'LICENSE'), licenseTemplate);
 console.log(`✓ Created ${path.join(extensionDir, 'LICENSE')}`);
+
+// Copy build_wheel.yml template if it exists
+const buildWheelTemplate = readTemplate('.github/workflows/build_wheel.yml');
+if (buildWheelTemplate) {
+    fs.writeFileSync(path.join(extensionDir, '.github', 'workflows', 'build_wheel.yml'), buildWheelTemplate);
+    console.log(`✓ Created ${path.join(extensionDir, '.github', 'workflows', 'build_wheel.yml')}`);
+}
 
 // Initialize git repository
 console.log('Initializing git repository...');

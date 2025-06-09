@@ -33,7 +33,8 @@ try {
         `extension_${testExtensionName}/extension_${testExtensionName}/__init__.py`,
         `extension_${testExtensionName}/setup.py`,
         `extension_${testExtensionName}/README.md`,
-        `extension_${testExtensionName}/LICENSE`
+        `extension_${testExtensionName}/LICENSE`,
+        `extension_${testExtensionName}/.github/workflows/build_wheel.yml`
     ];
     
     let allFilesExist = true;
