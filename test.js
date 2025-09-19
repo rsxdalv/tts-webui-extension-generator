@@ -10,6 +10,7 @@ console.log('Running tests for tts-webui-extension-generator...');
 console.log('\n1. Testing basic extension generation...');
 
 const testExtensionName = 'test_extension_' + Date.now();
+const packageName = `tts_webui_extension.${testExtensionName}`;
 const testDir = path.join(__dirname, 'test_output');
 
 // Clean up any existing test directory
@@ -27,14 +28,14 @@ try {
     // Run the generator
     execSync(`node ${path.join(__dirname, 'generate-extension.js')} ${testExtensionName}`, { stdio: 'pipe' });
     
-    // Check if files were created
+    // Check if files were created (generator now creates package 'tts_webui_extension.<name>')
     const expectedFiles = [
-        `extension_${testExtensionName}/extension_${testExtensionName}/main.py`,
-        `extension_${testExtensionName}/extension_${testExtensionName}/__init__.py`,
-        `extension_${testExtensionName}/setup.py`,
-        `extension_${testExtensionName}/README.md`,
-        `extension_${testExtensionName}/LICENSE`,
-        `extension_${testExtensionName}/.github/workflows/build_wheel.yml`
+        `${packageName}/tts_webui_extension/${testExtensionName}/main.py`,
+        `${packageName}/tts_webui_extension/${testExtensionName}/__init__.py`,
+        `${packageName}/setup.py`,
+        `${packageName}/README.md`,
+        `${packageName}/LICENSE`,
+        `${packageName}/.github/workflows/build_wheel.yml`
     ];
     
     let allFilesExist = true;
@@ -51,13 +52,13 @@ try {
     
     // Test 2: Check main.py content
     console.log('\n2. Testing main.py content...');
-    const mainPyPath = `extension_${testExtensionName}/extension_${testExtensionName}/main.py`;
+    const mainPyPath = `${packageName}/tts_webui_extension/${testExtensionName}/main.py`;
     const mainPyContent = fs.readFileSync(mainPyPath, 'utf8');
     
     const requiredContent = [
         `def ${testExtensionName}_ui():`,
         'def extension__tts_generation_webui():',
-        `"package_name": "extension_${testExtensionName}"`,
+        `"package_name": "${packageName}"`,
         'gr.Markdown('
     ];
     
@@ -75,10 +76,10 @@ try {
     
     // Test 3: Check setup.py content
     console.log('\n3. Testing setup.py content...');
-    const setupPyPath = `extension_${testExtensionName}/setup.py`;
+    const setupPyPath = `${packageName}/setup.py`;
     const setupPyContent = fs.readFileSync(setupPyPath, 'utf8');
     
-    if (setupPyContent.includes(`name="extension_${testExtensionName}"`)) {
+    if (setupPyContent.includes(`name="${packageName}"`)) {
         console.log('✅ setup.py content is valid');
     } else {
         console.error('❌ setup.py content is invalid');
