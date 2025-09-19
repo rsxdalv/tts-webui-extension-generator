@@ -14,9 +14,10 @@ if (args.length === 0) {
 }
 
 const extensionName = args[0];
-const packageName = `extension_${extensionName}`;
+const packageName = `tts_webui_extension.${extensionName}`;
 const extensionDir = path.join('.', packageName);
-const sourceDir = path.join(extensionDir, packageName);
+const packageStructureDir = path.join(extensionDir, 'tts_webui_extension');
+const sourceDir = path.join(packageStructureDir, extensionName);
 
 // Validate extension name
 if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(extensionName)) {
@@ -36,6 +37,7 @@ console.log(`Directory: ${extensionDir}`);
 
 // Create directory structure
 fs.mkdirSync(extensionDir, { recursive: true });
+fs.mkdirSync(packageStructureDir, { recursive: true });
 fs.mkdirSync(sourceDir, { recursive: true });
 fs.mkdirSync(path.join(extensionDir, '.github', 'workflows'), { recursive: true });
 
@@ -157,7 +159,7 @@ pip install git+https://github.com/yourusername/${packageName}@main
 To run the extension standalone:
 
 \`\`\`bash
-cd ${packageName}
+cd tts_webui_extension/${extensionName}
 python main.py
 \`\`\`
 
@@ -243,6 +245,6 @@ console.log(`1. cd ${extensionDir}`);
 console.log('2. Edit the files to implement your extension functionality');
 console.log('3. Update the metadata in main.py (author, description, etc.)');
 console.log('4. Add dependencies to setup.py if needed');
-console.log('5. Test your extension by running: python main.py');
+console.log(`5. Test your extension by running: cd tts_webui_extension/${extensionName} && python main.py`);
 console.log('6. Create a GitHub repository and push your code');
 console.log('7. Update the requirements URL in main.py to point to your repository');
