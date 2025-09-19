@@ -6,7 +6,7 @@ yarn-error.log*
 
 # Test output
 test_output/
-extension_test_*/
+tts_webui_extension.*/
 
 # OS generated files
 .DS_Store

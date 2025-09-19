@@ -7,13 +7,15 @@ const { execSync } = require('child_process');
 // Get command line arguments
 const args = process.argv.slice(2);
 if (args.length === 0) {
-    console.log('Usage: npx tts-webui-extension-generator <extension-name>');
-    console.log('   or: tts-webui-generate-extension <extension-name>');
-    console.log('Example: npx tts-webui-extension-generator my_awesome_extension');
+    console.log('Usage: npx tts-webui-extension-generator <extension-name> [github-username]');
+    console.log('   or: tts-webui-generate-extension <extension-name> [github-username]');
+    console.log('Example: npx tts-webui-extension-generator my_awesome_extension rsxdalv');
     process.exit(1);
 }
 
 const extensionName = args[0];
+// Optional GitHub username to use in generated URLs (defaults to username_missing)
+const githubUsername = args[1] || 'username_missing';
 const packageName = `tts_webui_extension.${extensionName}`;
 const extensionDir = path.join('.', packageName);
 const packageStructureDir = path.join(extensionDir, 'tts_webui_extension');
@@ -34,6 +36,7 @@ if (fs.existsSync(extensionDir)) {
 console.log(`Creating extension: ${extensionName}`);
 console.log(`Package name: ${packageName}`);
 console.log(`Directory: ${extensionDir}`);
+console.log(`GitHub username: ${githubUsername}`);
 
 // Create directory structure
 fs.mkdirSync(extensionDir, { recursive: true });
@@ -79,15 +82,15 @@ def extension__tts_generation_webui():
     return {
         "package_name": "${packageName}",
         "name": "${extensionName.charAt(0).toUpperCase() + extensionName.slice(1).replace(/_/g, ' ')}",
-        "requirements": "git+https://github.com/yourusername/${packageName}@main",
+        "requirements": "git+https://github.com/${githubUsername}/${packageName}@main",
         "description": "A template extension for TTS Generation WebUI",
         "extension_type": "interface",
-        "extension_class": "tools",
+        "extension_class": "text-to-speech",
         "author": "Your Name",
-        "extension_author": "Your Name",
+        "extension_author": "${githubUsername}",
         "license": "MIT",
-        "website": "https://github.com/yourusername/${packageName}",
-        "extension_website": "https://github.com/yourusername/${packageName}",
+        "website": "https://github.com/${githubUsername}/${packageName}",
+        "extension_website": "https://github.com/${githubUsername}/${packageName}",
         "extension_platform_version": "0.0.1",
     }
 
@@ -110,6 +113,10 @@ const initPyTemplate = `# ${extensionName.charAt(0).toUpperCase() + extensionNam
 
 // Template for setup.py
 const setupPyTemplate = `import setuptools
+from pathlib import Path
+
+HERE = Path(__file__).parent
+README = (HERE / "README.md").read_text(encoding="utf-8") if (HERE / "README.md").exists() else ""
 
 setuptools.setup(
     name="${packageName}",
@@ -117,7 +124,9 @@ setuptools.setup(
     version="0.0.1",
     author="Your Name",
     description="A template extension for TTS Generation WebUI",
-    url="https://github.com/yourusername/${packageName}",
+    long_description=README,
+    long_description_content_type="text/markdown",
+    url="https://github.com/${githubUsername}/${packageName}",
     project_urls={},
     scripts=[],
     install_requires=[
@@ -136,7 +145,7 @@ setuptools.setup(
 // Template for README.md
 const readmeTemplate = `# ${extensionName.charAt(0).toUpperCase() + extensionName.slice(1).replace(/_/g, ' ')}
 
-A template extension for TTS Generation WebUI.
+A template extension for [TTS WebUI](https://github.com/rsxdalv/tts-webui).
 
 ## Description
 
@@ -145,7 +154,7 @@ This is a template extension. Replace this content with your extension's descrip
 ## Installation
 
 \`\`\`bash
-pip install git+https://github.com/yourusername/${packageName}@main
+pip install git+https://github.com/${githubUsername}/${packageName}@main
 \`\`\`
 
 ## Usage
@@ -166,30 +175,6 @@ python main.py
 ## License
 
 MIT License
-`;
-
-// Template for LICENSE
-const licenseTemplate = `MIT License
-
-Copyright (c) ${new Date().getFullYear()} Your Name
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 `;
 
 // Read template files
@@ -217,8 +202,23 @@ console.log(`✓ Created ${path.join(extensionDir, 'setup.py')}`);
 fs.writeFileSync(path.join(extensionDir, 'README.md'), readmeTemplate);
 console.log(`✓ Created ${path.join(extensionDir, 'README.md')}`);
 
-fs.writeFileSync(path.join(extensionDir, 'LICENSE'), licenseTemplate);
+// Write LICENSE from templates (required)
+const templateLicense = readTemplate('LICENSE');
+if (!templateLicense) {
+    console.error('Error: Required template "templates/LICENSE" not found. Please add it to the templates/ directory.');
+    process.exit(1);
+}
+fs.writeFileSync(path.join(extensionDir, 'LICENSE'), templateLicense);
 console.log(`✓ Created ${path.join(extensionDir, 'LICENSE')}`);
+
+// Write .gitignore (must be present in templates)
+const templateGitignore = readTemplate('.gitignore');
+if (!templateGitignore) {
+    console.error('Error: Required template "templates/.gitignore" not found. Please add it to the templates/ directory.');
+    process.exit(1);
+}
+fs.writeFileSync(path.join(extensionDir, '.gitignore'), templateGitignore);
+console.log(`✓ Created ${path.join(extensionDir, '.gitignore')}`);
 
 // Copy build_wheel.yml template if it exists
 const buildWheelTemplate = readTemplate('.github/workflows/build_wheel.yml');
