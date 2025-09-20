@@ -187,6 +187,8 @@ function readTemplate(templatePath) {
     }
 }
 
+// Prefer templates/.gitignore, but also accept templates/gitignore (no leading dot) for npm packaging
+
 // Write files
 console.log('Creating files...');
 
@@ -211,10 +213,13 @@ if (!templateLicense) {
 fs.writeFileSync(path.join(extensionDir, 'LICENSE'), templateLicense);
 console.log(`✓ Created ${path.join(extensionDir, 'LICENSE')}`);
 
-// Write .gitignore (must be present in templates)
-const templateGitignore = readTemplate('.gitignore');
+// Write .gitignore: prefer templates/.gitignore, then templates/gitignore
+let templateGitignore = readTemplate('.gitignore');
 if (!templateGitignore) {
-    console.error('Error: Required template "templates/.gitignore" not found. Please add it to the templates/ directory.');
+    templateGitignore = readTemplate('gitignore');
+}
+if (!templateGitignore) {
+    console.error('Error: Required template "templates/.gitignore" (or "templates/gitignore") not found. Please add it to the templates/ directory.');
     process.exit(1);
 }
 fs.writeFileSync(path.join(extensionDir, '.gitignore'), templateGitignore);

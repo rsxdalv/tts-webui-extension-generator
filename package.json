@@ -1,6 +1,6 @@
 {
   "name": "tts-webui-extension-generator",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Extension generator for TTS Generation WebUI - creates boilerplate extensions with proper structure",
   "main": "generate-extension.js",
   "bin": {
@@ -37,8 +37,11 @@
   },
   "files": [
     "generate-extension.js",
-    "templates/",
+    "templates",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
