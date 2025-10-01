@@ -142,6 +142,34 @@ setuptools.setup(
 )
 `;
 
+const pyProjectTomlTemplate = `[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "${packageName}"
+version = "0.0.1"
+description = "A template extension for TTS Generation WebUI"
+readme = "README.md"
+authors = [
+    { name="${githubUsername}", email="" }
+]
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    # Add your dependencies here
+    # "torch",
+]
+urls = { "Homepage" = "https://github.com/${githubUsername}/${packageName}" }
+
+[tool.setuptools.packages.find]
+namespace = true
+`
+
 // Template for README.md
 const readmeTemplate = `# ${extensionName.charAt(0).toUpperCase() + extensionName.slice(1).replace(/_/g, ' ')}
 
@@ -198,8 +226,11 @@ console.log(`✓ Created ${path.join(sourceDir, 'main.py')}`);
 fs.writeFileSync(path.join(sourceDir, '__init__.py'), initPyTemplate);
 console.log(`✓ Created ${path.join(sourceDir, '__init__.py')}`);
 
-fs.writeFileSync(path.join(extensionDir, 'setup.py'), setupPyTemplate);
-console.log(`✓ Created ${path.join(extensionDir, 'setup.py')}`);
+// fs.writeFileSync(path.join(extensionDir, 'setup.py'), setupPyTemplate);
+// console.log(`✓ Created ${path.join(extensionDir, 'setup.py')}`);
+
+fs.writeFileSync(path.join(extensionDir, 'pyproject.toml'), pyProjectTomlTemplate);
+console.log(`✓ Created ${path.join(extensionDir, 'pyproject.toml')}`);
 
 fs.writeFileSync(path.join(extensionDir, 'README.md'), readmeTemplate);
 console.log(`✓ Created ${path.join(extensionDir, 'README.md')}`);
@@ -249,7 +280,7 @@ console.log('\nNext steps:');
 console.log(`1. cd ${extensionDir}`);
 console.log('2. Edit the files to implement your extension functionality');
 console.log('3. Update the metadata in main.py (author, description, etc.)');
-console.log('4. Add dependencies to setup.py if needed');
+console.log('4. Add dependencies to pyproject.toml if needed');
 console.log(`5. Test your extension by running: cd tts_webui_extension/${extensionName} && python main.py`);
 console.log('6. Create a GitHub repository and push your code');
 console.log('7. Update the requirements URL in main.py to point to your repository');

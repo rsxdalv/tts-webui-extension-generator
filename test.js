@@ -32,7 +32,7 @@ try {
     const expectedFiles = [
         `${packageName}/tts_webui_extension/${testExtensionName}/main.py`,
         `${packageName}/tts_webui_extension/${testExtensionName}/__init__.py`,
-        `${packageName}/setup.py`,
+        `${packageName}/pyproject.toml`,
         `${packageName}/README.md`,
         `${packageName}/LICENSE`,
         `${packageName}/.github/workflows/build_wheel.yml`
@@ -74,15 +74,18 @@ try {
         console.log('✅ main.py content is valid');
     }
     
-    // Test 3: Check setup.py content
-    console.log('\n3. Testing setup.py content...');
-    const setupPyPath = `${packageName}/setup.py`;
-    const setupPyContent = fs.readFileSync(setupPyPath, 'utf8');
-    
-    if (setupPyContent.includes(`name="${packageName}"`)) {
-        console.log('✅ setup.py content is valid');
+    // Test 3: Check pyproject.toml content
+    console.log('\n3. Testing pyproject.toml content...');
+    const pyprojectPath = `${packageName}/pyproject.toml`;
+    const pyprojectContent = fs.readFileSync(pyprojectPath, 'utf8');
+
+    const hasProjectSection = pyprojectContent.includes('[project]');
+    const hasName = pyprojectContent.includes(`name = "${packageName}"`);
+
+    if (hasProjectSection && hasName) {
+        console.log('✅ pyproject.toml content is valid');
     } else {
-        console.error('❌ setup.py content is invalid');
+        console.error('❌ pyproject.toml content is invalid');
     }
     
     console.log('\n✅ All tests passed!');
